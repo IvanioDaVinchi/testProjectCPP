@@ -23,7 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintsReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class USpotLightComponent* MySpotLightComponent;
 
 	UFUNCTION()

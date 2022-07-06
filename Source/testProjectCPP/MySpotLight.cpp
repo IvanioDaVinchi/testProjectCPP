@@ -31,9 +31,11 @@ void AMySpotLight::Tick(float DeltaTime)
 
 void AMySpotLight::SetSpotLightEnabled()
 {
+	MySpotLightComponent->SetVisibility(true);
 }
 
 void AMySpotLight::SetSpotLightDisabled()
 {
+	MySpotLightComponent->SetVisibility(false);
 }
 

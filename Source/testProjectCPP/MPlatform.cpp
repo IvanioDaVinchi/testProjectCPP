@@ -20,7 +20,6 @@ void AMPlatform::BeginPlay()
 
 	GlobalStartLocation = GetActorLocation();
 	GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
-
 }
 
 void AMPlatform::Tick(float DeltaTime)

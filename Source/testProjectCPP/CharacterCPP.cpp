@@ -31,8 +31,33 @@ ACharacterCPP::ACharacterCPP()
 	GetCharacterMovement()->JumpZVelocity = 750.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 450.0f;
 
-
 	bDead = false;
+
+	TriggerCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Trigger Capsule"));
+	TriggerCapsule->SetupAttachment(RootComponent);
+	TriggerCapsule->InitCapsuleSize(55.0f, 96.0f);
+	TriggerCapsule->SetCollisionProfileName(TEXT("Trigger"));
+
+	TriggerCapsule->OnComponentBeginOverlap.AddDynamic(this, &ACharacterCPP::OnOverlapBegin);
+	TriggerCapsule->OnComponentEndOverlap.AddDynamic(this, &ACharacterCPP::OnOverlapEnd);
+
+	Door = NULL;
+}
+
+void ACharacterCPP::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp && OtherActor->GetClass()->IsChildOf(AMyDoor::StaticClass()))
+	{
+		Door = Cast<AMyDoor>(OtherActor);
+	}
+}
+
+void ACharacterCPP::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		Door = NULL;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -62,6 +87,7 @@ void ACharacterCPP::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacterCPP::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacterCPP::StopJumping);
 
+	PlayerInputComponent->BindAction("Use", IE_Pressed, this, &ACharacterCPP::OnUse);
 }
 
 void ACharacterCPP::MoveForward(float Axis)
@@ -99,5 +125,14 @@ void ACharacterCPP::StopJumping()
 	if (Controller != NULL && !bDead)
 	{
 		ACharacter::StopJumping();
+	}
+}
+
+void ACharacterCPP::OnUse()
+{
+	if (Door)
+	{
+		FVector ForwardVector = FollowCamera->GetForwardVector();
+		Door->ToggleDoor(ForwardVector);
 	}
 }

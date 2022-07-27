@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyDoor.h"
 #include "GameFramework/Character.h"
 #include "CharacterCPP.generated.h"
 
@@ -20,6 +21,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, Category = "Trigger Capsule")
+		class UCapsuleComponent* TriggerCapsule;
+
 	void MoveForward(float Axis);
 	void MoveRight(float Axis);
 	void Jump();
@@ -28,9 +32,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bDead;
 
+	class AMyDoor* Door;
+
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void OnUse();
 
 public:	
 	// Called every frame
